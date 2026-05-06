@@ -48,6 +48,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/requisitions/{requisition}/approve', [RequisitionController::class, 'approve'])->name('requisitions.approve');
     Route::post('/requisitions/{requisition}/reject',  [RequisitionController::class, 'reject'])->name('requisitions.reject');
     Route::get('/requisitions/{requisition}',          [RequisitionController::class, 'show'])->name('requisitions.show');
+    Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports');
 });
 
 // ── Employee Routes ───────────────────────────────────────────────
