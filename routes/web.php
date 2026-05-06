@@ -12,6 +12,18 @@ Route::get('/', function () {
 
 // ── Auth Routes (provided by Breeze) ──────────────────────────────
 require __DIR__.'/auth.php';
+// ── Notification Routes ───────────────────────────────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications/{notification}/read', function (App\Models\Notification $notification) {
+        $notification->update(['is_read' => true]);
+        return redirect($notification->link ?? back()->getTargetUrl());
+    })->name('notifications.read');
+
+    Route::get('/notifications/read-all', function () {
+        auth()->user()->notifications()->update(['is_read' => true]);
+        return redirect()->back()->with('success', 'All notifications marked as read!');
+    })->name('notifications.readall');
+});
 
 // ── Redirect after login based on role ───────────────────────────
 Route::middleware('auth')->get('/dashboard', function () {
