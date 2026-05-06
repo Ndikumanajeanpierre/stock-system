@@ -81,6 +81,7 @@
                 <a href="{{ route('admin.departments') }}" class="nav-link"><i class="fas fa-building me-2"></i> Departments</a>
                 <a href="{{ route('admin.requisitions') }}" class="nav-link"><i class="fas fa-list me-2"></i> Requisitions</a>
                 <a href="{{ route('admin.reports') }}" class="nav-link"><i class="fas fa-chart-bar me-2"></i> Reports</a>
+                <a href="{{ route('admin.stock-items') }}" class="nav-link"><i class="fas fa-boxes me-2"></i> Stock Items</a>
             @elseif(auth()->user()->isAccountant())
                 <a href="{{ route('accountant.dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
                 <a href="{{ route('accountant.requisitions') }}" class="nav-link"><i class="fas fa-list me-2"></i> Requisitions</a>

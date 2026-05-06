@@ -49,6 +49,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/requisitions/{requisition}/reject',  [RequisitionController::class, 'reject'])->name('requisitions.reject');
     Route::get('/requisitions/{requisition}',          [RequisitionController::class, 'show'])->name('requisitions.show');
     Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports');
+    Route::get('/stock-items', [App\Http\Controllers\StockItemController::class, 'index'])->name('stock-items');
+Route::post('/stock-items', [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
+Route::put('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
+Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
 });
 
 // ── Employee Routes ───────────────────────────────────────────────
@@ -58,6 +62,7 @@ Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee
     Route::get('/requisitions/create',          [EmployeeController::class, 'create'])->name('requisitions.create');
     Route::post('/requisitions',                [EmployeeController::class, 'store'])->name('requisitions.store');
     Route::get('/requisitions/{requisition}',   [EmployeeController::class, 'show'])->name('requisitions.show');
+    Route::get('/stock-items', [App\Http\Controllers\StockItemController::class, 'available'])->name('stock-items');
 });
 
 // ── Accountant Routes ─────────────────────────────────────────────
