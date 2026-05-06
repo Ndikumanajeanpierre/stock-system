@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'New Requisition')
@@ -13,25 +14,26 @@
     <div class="card-body">
         <form method="POST" action="{{ route('employee.requisitions.store') }}">
             @csrf
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Item Name</label>
+            <div class="row g-3">
+                <div class="col-md-12 mb-2">
+                    <label class="form-label fw-bold">Item Name</label>
                     <input type="text" name="item_name"
                         class="form-control @error('item_name') is-invalid @enderror"
-                        value="{{ old('item_name') }}" required>
+                        value="{{ old('item_name') }}"
+                        placeholder="Enter item name" required>
                     @error('item_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Quantity</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Quantity</label>
                     <input type="number" name="quantity" min="1"
                         class="form-control @error('quantity') is-invalid @enderror"
-                        value="{{ old('quantity') }}" required>
+                        value="{{ old('quantity', 1) }}" required>
                     @error('quantity')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Unit</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Unit</label>
                     <select name="unit" class="form-select @error('unit') is-invalid @enderror" required>
                         <option value="">Select Unit</option>
                         <option value="piece"  {{ old('unit') == 'piece'  ? 'selected' : '' }}>Piece</option>
@@ -45,8 +47,17 @@
                     @error('unit')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Department</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Estimated Cost (optional)</label>
+                    <input type="number" name="estimated_cost" min="0" step="0.01"
+                        class="form-control @error('estimated_cost') is-invalid @enderror"
+                        value="{{ old('estimated_cost') }}"
+                        placeholder="0.00">
+                    @error('estimated_cost')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Department</label>
                     <select name="department_id" class="form-select @error('department_id') is-invalid @enderror" required>
                         <option value="">Select Department</option>
                         @foreach($departments as $dept)
@@ -58,35 +69,33 @@
                     @error('department_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Priority</label>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Priority</label>
                     <select name="priority" class="form-select @error('priority') is-invalid @enderror" required>
                         <option value="">Select Priority</option>
-                        <option value="low"    {{ old('priority') == 'low'    ? 'selected' : '' }}>Low</option>
-                        <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
-                        <option value="high"   {{ old('priority') == 'high'   ? 'selected' : '' }}>High</option>
-                        <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
+                        <option value="low"    {{ old('priority') == 'low'    ? 'selected' : '' }}>🟢 Low</option>
+                        <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>🔵 Medium</option>
+                        <option value="high"   {{ old('priority') == 'high'   ? 'selected' : '' }}>🟠 High</option>
+                        <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>🔴 Urgent</option>
                     </select>
                     @error('priority')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Estimated Cost (optional)</label>
-                    <input type="number" name="estimated_cost" min="0" step="0.01"
-                        class="form-control @error('estimated_cost') is-invalid @enderror"
-                        value="{{ old('estimated_cost') }}">
-                    @error('estimated_cost')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Description (optional)</label>
+                    <textarea name="description" class="form-control" rows="3"
+                        placeholder="Describe why you need this item...">{{ old('description') }}</textarea>
                 </div>
 
-                <div class="col-md-12 mb-3">
-                    <label class="form-label">Description (optional)</label>
-                    <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+                <div class="col-md-12 mt-2">
+                    <button type="submit" class="btn btn-primary px-5">
+                        <i class="fas fa-paper-plane me-2"></i> Submit Requisition
+                    </button>
+                    <a href="{{ route('employee.requisitions') }}" class="btn btn-secondary ms-2">
+                        Cancel
+                    </a>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i> Submit Requisition
-            </button>
         </form>
     </div>
 </div>
