@@ -87,14 +87,14 @@ class AccountantController extends Controller
         // Update requisition status to paid
         $requisition->update(['status' => 'paid']);
 
-        // Notify employee
-        Notification::send(
-            $requisition->user_id,
-            'Payment Uploaded',
-            'Payment receipt for ' . $requisition->reference_number . ' has been uploaded.',
-            'success'
-        );
-
+        // Notify employee with receipt link
+$receiptUrl = asset('storage/' . $path);
+Notification::send(
+    $requisition->user_id,
+    'Payment Receipt Uploaded 🧾',
+    'Payment receipt for ' . $requisition->reference_number . ' has been uploaded. Amount: $' . $request->amount . '. You can view and download your receipt here: ' . $receiptUrl,
+    'success'
+);
         return redirect()->route('accountant.requisitions')->with('success', 'Payment uploaded successfully!');
     }
 

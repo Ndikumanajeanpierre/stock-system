@@ -74,12 +74,27 @@
                         <div><strong>Payment Uploaded</strong></div>
                     </li>
                     @endif
-                    @if($requisition->status === 'completed')
-                    <li class="list-group-item d-flex align-items-center gap-2">
-                        <i class="fas fa-circle text-dark"></i>
-                        <div><strong>Completed</strong></div>
-                    </li>
-                    @endif
+                    @if(in_array($requisition->status, ['paid','completed']))
+    <li class="list-group-item d-flex align-items-center gap-2">
+        <i class="fas fa-circle text-success"></i>
+        <div>
+            <strong>Payment Uploaded</strong>
+            @if($requisition->payment)
+            <br>
+            <small>Amount: ${{ number_format($requisition->payment->amount, 2) }}</small><br>
+            <a href="{{ asset('storage/'.$requisition->payment->receipt_path) }}"
+                target="_blank" class="btn btn-sm btn-info mt-1 me-1">
+                <i class="fas fa-eye me-1"></i> View Receipt
+            </a>
+            <a href="{{ asset('storage/'.$requisition->payment->receipt_path) }}"
+                download="{{ $requisition->payment->receipt_original_name }}"
+                class="btn btn-sm btn-success mt-1">
+                <i class="fas fa-download me-1"></i> Download Receipt
+            </a>
+            @endif
+        </div>
+    </li>
+@endif
                 </ul>
             </div>
         </div>

@@ -50,9 +50,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/requisitions/{requisition}',          [RequisitionController::class, 'show'])->name('requisitions.show');
     Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports');
     Route::get('/stock-items', [App\Http\Controllers\StockItemController::class, 'index'])->name('stock-items');
-Route::post('/stock-items', [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
-Route::put('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
-Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
+    Route::post('/stock-items', [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
+    Route::put('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
+    Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
+    Route::get('/payments/{payment}/download', function(App\Models\Payment $payment) {
+        $path = storage_path('app/public/' . $payment->receipt_path);
+        return response()->download($path, $payment->receipt_original_name);
+    })->name('receipt.download');
 });
 
 // ── Employee Routes ───────────────────────────────────────────────

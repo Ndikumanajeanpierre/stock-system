@@ -41,15 +41,25 @@
                 </div>
                 @endif
 
-                @if($requisition->payment)
-                <div class="alert alert-success">
-                    <strong>Payment Info</strong><br>
-                    Amount: ${{ $requisition->payment->amount }}<br>
-                    Method: {{ $requisition->payment->payment_method }}<br>
-                    Date: {{ $requisition->payment->payment_date->format('d M Y') }}<br>
-                    Receipt: <a href="{{ asset('storage/'.$requisition->payment->receipt_path) }}" target="_blank">View Receipt</a>
-                </div>
-                @endif
+               @if($requisition->payment)
+<div class="alert alert-success">
+    <strong>Payment Info</strong><br>
+    Amount: ${{ $requisition->payment->amount }}<br>
+    Method: {{ $requisition->payment->payment_method }}<br>
+    Date: {{ $requisition->payment->payment_date->format('d M Y') }}<br>
+    Transaction Ref: {{ $requisition->payment->transaction_reference ?? 'N/A' }}<br>
+    <div class="mt-2">
+        <a href="{{ asset('storage/'.$requisition->payment->receipt_path) }}"
+            target="_blank" class="btn btn-sm btn-info me-2">
+            <i class="fas fa-eye me-1"></i> View Receipt
+        </a>
+        <a href="{{ route('admin.receipt.download', $requisition->payment) }}"
+            class="btn btn-sm btn-success">
+            <i class="fas fa-download me-1"></i> Download Receipt
+        </a>
+    </div>
+</div>
+@endif
 
                 @if($requisition->status === 'pending')
                 <div class="d-flex gap-2 mt-3">
