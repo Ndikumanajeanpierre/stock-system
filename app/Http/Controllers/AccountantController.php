@@ -46,11 +46,12 @@ class AccountantController extends Controller
 
         // Notify employee
         Notification::send(
-            $requisition->user_id,
-            'Requisition Status Updated',
-            'Your request ' . $requisition->reference_number . ' is now ' . $request->status,
-            'info'
-        );
+    $requisition->user_id,
+    'Requisition Status Updated',
+    'Your request ' . $requisition->reference_number . ' is now ' . $request->status,
+    'info',
+    route('employee.requisitions.show', $requisition)
+);
 
         return redirect()->route('accountant.requisitions')->with('success', 'Status updated successfully!');
     }
@@ -91,7 +92,7 @@ class AccountantController extends Controller
 $receiptUrl = asset('storage/' . $path);
 Notification::send(
     $requisition->user_id,
-    'Payment Receipt Uploaded 🧾',
+    'Payment Receipt Uploaded',
     'Payment receipt for ' . $requisition->reference_number . ' has been uploaded. Amount: $' . $request->amount . '. You can view and download your receipt here: ' . $receiptUrl,
     'success'
 );

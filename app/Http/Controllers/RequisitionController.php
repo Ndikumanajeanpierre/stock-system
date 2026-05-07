@@ -17,23 +17,24 @@ class RequisitionController extends Controller
             'approved_at' => now(),
         ]);
 
-        // Notify employee
-        Notification::send(
-            $requisition->user_id,
-            'Requisition Approved',
-            'Your request ' . $requisition->reference_number . ' has been approved!',
-            'success'
-        );
+    Notification::send(
+    $requisition->user_id,
+    'Requisition Approved',
+    'Your request ' . $requisition->reference_number . ' has been approved!',
+    'success',
+    route('employee.requisitions.show', $requisition)
+);
 
         // Notify accountants
         $accountants = User::where('role', 'accountant')->get();
         foreach ($accountants as $accountant) {
-            Notification::send(
-                $accountant->id,
-                'New Approved Requisition',
-                'Requisition ' . $requisition->reference_number . ' is ready for purchasing.',
-                'info'
-            );
+           Notification::send(
+    $accountant->id,
+    'New Approved Requisition',
+    'Requisition ' . $requisition->reference_number . ' is ready for purchasing.',
+    'info',
+    route('accountant.requisitions')
+);
         }
 
         return redirect()->back()->with('success', 'Requisition approved successfully!');
@@ -51,12 +52,13 @@ class RequisitionController extends Controller
         ]);
 
         // Notify employee
-        Notification::send(
-            $requisition->user_id,
-            'Requisition Rejected',
-            'Your request ' . $requisition->reference_number . ' has been rejected. Reason: ' . $request->rejection_reason,
-            'danger'
-        );
+       Notification::send(
+    $requisition->user_id,
+    'Requisition Rejected',
+    'Your request ' . $requisition->reference_number . ' has been rejected. Reason: ' . $request->rejection_reason,
+    'danger',
+    route('employee.requisitions.show', $requisition)
+);
 
         return redirect()->back()->with('success', 'Requisition rejected.');
     }

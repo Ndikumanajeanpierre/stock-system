@@ -15,9 +15,12 @@ require __DIR__.'/auth.php';
 // ── Notification Routes ───────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/notifications/{notification}/read', function (App\Models\Notification $notification) {
-        $notification->update(['is_read' => true]);
-        return redirect($notification->link ?? back()->getTargetUrl());
-    })->name('notifications.read');
+    $notification->update(['is_read' => true]);
+    if ($notification->link) {
+        return redirect($notification->link);
+    }
+    return redirect()->back();
+})->name('notifications.read');
 
     Route::get('/notifications/read-all', function () {
         auth()->user()->notifications()->update(['is_read' => true]);

@@ -68,11 +68,12 @@ class EmployeeController extends Controller
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::send(
-                $admin->id,
-                'New Requisition Submitted',
-                auth()->user()->name . ' submitted a new request for ' . $request->item_name,
-                'info'
-            );
+    $admin->id,
+    'New Requisition Submitted',
+    auth()->user()->name . ' submitted a new request for ' . $request->item_name,
+    'info',
+    route('admin.requisitions')
+);
         }
 
         return redirect()->route('employee.requisitions')->with('success', 'Requisition submitted successfully!');
