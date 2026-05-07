@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/stock-items', [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
     Route::put('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
+    Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
     Route::get('/payments/{payment}/download', function(App\Models\Payment $payment) {
         $path = storage_path('app/public/' . $payment->receipt_path);
         return response()->download($path, $payment->receipt_original_name);
@@ -79,4 +80,5 @@ Route::middleware(['auth', 'role:accountant'])->prefix('accountant')->name('acco
     Route::post('/requisitions/{requisition}/status',               [AccountantController::class, 'updateStatus'])->name('requisitions.status');
     Route::get('/requisitions/{requisition}/payment',               [AccountantController::class, 'showPaymentForm'])->name('requisitions.payment');
     Route::post('/requisitions/{requisition}/payment',              [AccountantController::class, 'uploadPayment'])->name('requisitions.payment.store');
+    Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
 });

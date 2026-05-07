@@ -362,6 +362,9 @@
                 <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports*') ? 'active' : '' }}">
                     <div class="nav-icon"><i class="fas fa-chart-bar"></i></div> Reports
                 </a>
+                <a href="{{ route('admin.stock-report') }}" class="nav-link {{ request()->routeIs('admin.stock-report*') ? 'active' : '' }}">
+    <div class="nav-icon"><i class="fas fa-warehouse"></i></div> Stock Report
+</a>
 
             @elseif(auth()->user()->isAccountant())
                 <div class="sidebar-section">Main</div>
@@ -372,6 +375,9 @@
                 <a href="{{ route('accountant.requisitions') }}" class="nav-link {{ request()->routeIs('accountant.requisitions*') ? 'active' : '' }}">
                     <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div> Requisitions
                 </a>
+                <a href="{{ route('accountant.stock-report') }}" class="nav-link {{ request()->routeIs('accountant.stock-report*') ? 'active' : '' }}">
+    <div class="nav-icon"><i class="fas fa-warehouse"></i></div> Stock Report
+</a>
 
             @else
                 <div class="sidebar-section">Main</div>

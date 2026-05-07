@@ -19,6 +19,21 @@ class StockItem extends Model
         'unit_price'   => 'decimal:2',
     ];
 
+    public function movements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function totalIn()
+    {
+        return $this->movements()->where('type', 'in')->sum('quantity');
+    }
+
+    public function totalOut()
+    {
+        return $this->movements()->where('type', 'out')->sum('quantity');
+    }
+
     public function scopeAvailable($query)
     {
         return $query->where('is_available', true)->where('quantity_available', '>', 0);

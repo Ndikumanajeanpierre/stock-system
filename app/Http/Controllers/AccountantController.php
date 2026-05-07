@@ -36,25 +36,44 @@ class AccountantController extends Controller
         return view('accountant.requisitions', compact('requisitions'));
     }
 
-    public function updateStatus(Request $request, StockRequisition $requisition)
-    {
-        $request->validate([
-            'status' => 'required|in:purchased,completed',
-        ]);
+   public function updateStatus(Request $request, StockRequisition $requisition)
+{
+    $request->validate([
+        'status' => 'required|in:purchased,completed',
+    ]);
 
-        $requisition->update(['status' => $request->status]);
+    $requisition->update(['status' => $request->status]);
 
-        // Notify employee
-        Notification::send(
-    $requisition->user_id,
-    'Requisition Status Updated',
-    'Your request ' . $requisition->reference_number . ' is now ' . $request->status,
-    'info',
-    route('employee.requisitions.show', $requisition)
-);
+    // Record stock OUT when completed
+    if ($request->status === 'completed') {
+        $stockItem = \App\Models\StockItem::where('name', $requisition->item_name)->first();
+        if ($stockItem) {
+            // Subtract quantity
+            $stockItem->decrement('quantity_available', $requisition->quantity);
 
-        return redirect()->route('accountant.requisitions')->with('success', 'Status updated successfully!');
+            // Record movement
+            \App\Models\StockMovement::create([
+                'stock_item_id'        => $stockItem->id,
+                'stock_requisition_id' => $requisition->id,
+                'type'                 => 'out',
+                'quantity'             => $requisition->quantity,
+                'note'                 => 'Item issued for requisition ' . $requisition->reference_number,
+                'created_by'           => auth()->id(),
+            ]);
+        }
     }
+
+    // Notify employee
+    \App\Models\Notification::send(
+        $requisition->user_id,
+        'Requisition Status Updated',
+        'Your request ' . $requisition->reference_number . ' is now ' . $request->status,
+        'info',
+        route('employee.requisitions.show', $requisition)
+    );
+
+    return redirect()->route('accountant.requisitions')->with('success', 'Status updated successfully!');
+}
 
     public function uploadPayment(Request $request, StockRequisition $requisition)
     {
