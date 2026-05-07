@@ -12,6 +12,14 @@ Route::get('/', function () {
 
 // ── Auth Routes (provided by Breeze) ──────────────────────────────
 require __DIR__.'/auth.php';
+// ── Profile Routes ────────────────────────────────────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/settings',        [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.settings');
+    Route::post('/profile/update-info',    [App\Http\Controllers\ProfileController::class, 'updateInfo'])->name('profile.update-info');
+    Route::post('/profile/update-password',[App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    Route::post('/profile/update-photo',   [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.update-photo');
+    Route::delete('/profile/delete-photo', [App\Http\Controllers\ProfileController::class, 'deletePhoto'])->name('profile.delete-photo');
+});
 // ── Notification Routes ───────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/notifications/{notification}/read', function (App\Models\Notification $notification) {
