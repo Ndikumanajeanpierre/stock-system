@@ -105,7 +105,22 @@ class AccountantController extends Controller
         ]);
 
         // Update requisition status to paid
-        $requisition->update(['status' => 'paid']);
+       // Update requisition status to paid
+$requisition->update(['status' => 'paid']);
+
+// Record stock OUT when paid
+$stockItem = \App\Models\StockItem::where('name', $requisition->item_name)->first();
+if ($stockItem) {
+    $stockItem->decrement('quantity_available', $requisition->quantity);
+    \App\Models\StockMovement::create([
+        'stock_item_id'        => $stockItem->id,
+        'stock_requisition_id' => $requisition->id,
+        'type'                 => 'out',
+        'quantity'             => $requisition->quantity,
+        'note'                 => 'Item issued for ' . $requisition->reference_number,
+        'created_by'           => auth()->id(),
+    ]);
+}
 
         // Notify employee with receipt link
 $receiptUrl = asset('storage/' . $path);
