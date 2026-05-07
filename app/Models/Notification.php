@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RequisitionNotificationMail;
 
 class Notification extends Model
 {
@@ -22,12 +24,27 @@ class Notification extends Model
 
     public static function send(int $userId, string $title, string $message, string $type = 'info', string $link = null): self
     {
-        return static::create([
+        // Save system notification
+        $notification = static::create([
             'user_id' => $userId,
             'title'   => $title,
             'message' => $message,
             'type'    => $type,
             'link'    => $link,
         ]);
+
+        // Send email notification
+        try {
+            $user = User::find($userId);
+            if ($user && $user->email) {
+                Mail::to($user->email)->send(
+                    new RequisitionNotificationMail($title, $message, $type)
+                );
+            }
+        } catch (\Exception $e) {
+            // Silently fail - don't break the app if email fails
+        }
+
+        return $notification;
     }
 }
