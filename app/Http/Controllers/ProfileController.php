@@ -39,28 +39,34 @@ class ProfileController extends Controller
         return redirect()->route('profile.settings')->with('success', 'Profile updated successfully!');
     }
 
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => 'required',
-            'password'         => 'required|min:8|confirmed',
-        ]);
+   public function updatePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'password'         => 'required|min:8|confirmed',
+    ]);
 
-        $user = auth()->user();
+    $user = auth()->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->route('profile.settings')
-                ->with('error', 'Current password is incorrect!');
-        }
-
-        DB::table('users')->where('id', $user->id)->update([
-            'password'   => Hash::make($request->password),
-            'updated_at' => now(),
-        ]);
-
-        return redirect()->route('profile.settings')->with('success', 'Password updated successfully!');
+    if (!Hash::check($request->current_password, $user->password)) {
+        return redirect()->route('profile.settings')
+            ->with('error', 'Current password is incorrect!');
     }
 
+    // Update password
+    DB::table('users')->where('id', $user->id)->update([
+        'password'   => Hash::make($request->password),
+        'updated_at' => now(),
+    ]);
+
+    // Log out and redirect to login
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login')
+        ->with('status', 'Password updated successfully! Please login with your new password.');
+}
     public function updatePhoto(Request $request)
     {
         $request->validate([
