@@ -68,12 +68,12 @@ class EmployeeController extends Controller
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::send(
-    $admin->id,
-    'New Requisition Submitted',
-    auth()->user()->name . ' submitted a new request for ' . $request->item_name,
-    'info',
-    route('admin.requisitions')
-);
+                $admin->id,
+                'New Requisition Submitted',
+                auth()->user()->name . ' submitted a new request for ' . $request->item_name,
+                'info',
+                route('admin.requisitions')
+            );
         }
 
         return redirect()->route('employee.requisitions')->with('success', 'Requisition submitted successfully!');
@@ -84,6 +84,24 @@ class EmployeeController extends Controller
         if ($requisition->user_id !== auth()->id()) {
             abort(403);
         }
+        $requisition->load(['department', 'payment']);
         return view('employee.show-requisition', compact('requisition'));
+    }
+
+    public function cancel(StockRequisition $requisition)
+    {
+        if ($requisition->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($requisition->status !== 'pending') {
+            return redirect()->route('employee.requisitions')
+                ->with('error', 'Only pending requests can be cancelled!');
+        }
+
+        $requisition->delete();
+
+        return redirect()->route('employee.requisitions')
+            ->with('success', 'Requisition cancelled successfully!');
     }
 }

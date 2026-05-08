@@ -43,10 +43,22 @@
                     </td>
                     <td>{{ $req->created_at->format('d M Y') }}</td>
                     <td>
-                        <a href="{{ route('employee.requisitions.show', $req) }}" class="btn btn-sm btn-info">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                    </td>
+    <div class="d-flex gap-1">
+        <a href="{{ route('employee.requisitions.show', $req) }}" class="btn btn-sm btn-info">
+            <i class="fas fa-eye"></i> View
+        </a>
+        @if($req->status === 'pending')
+            <form method="POST" action="{{ route('employee.requisitions.cancel', $req) }}" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-sm btn-danger"
+                    onclick="return confirm('Cancel this request?')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </form>
+        @endif
+    </div>
+</td>
                 </tr>
                 @empty
                 <tr>

@@ -50,6 +50,11 @@
         </div>
     </div>
 </div>
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('admin.reports.export-pdf', request()->query()) }}" class="btn btn-danger">
+        <i class="fas fa-file-pdf me-2"></i> Export PDF
+    </a>
+</div>
 
 <!-- Filters -->
 <div class="card mb-3">

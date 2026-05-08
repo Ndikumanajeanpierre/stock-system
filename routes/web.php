@@ -12,6 +12,7 @@ Route::get('/', function () {
 
 // ── Auth Routes (provided by Breeze) ──────────────────────────────
 require __DIR__.'/auth.php';
+
 // ── Profile Routes ────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/profile/settings',        [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.settings');
@@ -20,15 +21,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update-photo',   [App\Http\Controllers\ProfileController::class, 'updatePhoto'])->name('profile.update-photo');
     Route::delete('/profile/delete-photo', [App\Http\Controllers\ProfileController::class, 'deletePhoto'])->name('profile.delete-photo');
 });
+
 // ── Notification Routes ───────────────────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/notifications/{notification}/read', function (App\Models\Notification $notification) {
-    $notification->update(['is_read' => true]);
-    if ($notification->link) {
-        return redirect($notification->link);
-    }
-    return redirect()->back();
-})->name('notifications.read');
+        $notification->update(['is_read' => true]);
+        if ($notification->link) {
+            return redirect($notification->link);
+        }
+        return redirect()->back();
+    })->name('notifications.read');
 
     Route::get('/notifications/read-all', function () {
         auth()->user()->notifications()->update(['is_read' => true]);
@@ -53,16 +55,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users/create',           [AdminController::class, 'createUser'])->name('users.create');
     Route::post('/users',                 [AdminController::class, 'storeUser'])->name('users.store');
     Route::post('/users/{user}/toggle',   [AdminController::class, 'toggleUser'])->name('users.toggle');
+    Route::put('/users/{user}',           [AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}',        [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::get('/departments',            [AdminController::class, 'departments'])->name('departments');
     Route::post('/departments',           [AdminController::class, 'storeDepartment'])->name('departments.store');
     Route::get('/requisitions',           [AdminController::class, 'requisitions'])->name('requisitions');
     Route::post('/requisitions/{requisition}/approve', [RequisitionController::class, 'approve'])->name('requisitions.approve');
     Route::post('/requisitions/{requisition}/reject',  [RequisitionController::class, 'reject'])->name('requisitions.reject');
     Route::get('/requisitions/{requisition}',          [RequisitionController::class, 'show'])->name('requisitions.show');
-    Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports');
-    Route::get('/stock-items', [App\Http\Controllers\StockItemController::class, 'index'])->name('stock-items');
+    Route::get('/reports',      [App\Http\Controllers\ReportController::class, 'index'])->name('reports');
+    Route::get('/reports/export-pdf', [App\Http\Controllers\ReportController::class, 'exportPdf'])->name('reports.export-pdf');
+    Route::get('/stock-items',  [App\Http\Controllers\StockItemController::class, 'index'])->name('stock-items');
     Route::post('/stock-items', [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
-    Route::put('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
+    Route::put('/stock-items/{stockItem}',    [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
     Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
     Route::get('/payments/{payment}/download', function(App\Models\Payment $payment) {
@@ -73,20 +78,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // ── Employee Routes ───────────────────────────────────────────────
 Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
-    Route::get('/dashboard',                    [EmployeeController::class, 'dashboard'])->name('dashboard');
-    Route::get('/requisitions',                 [EmployeeController::class, 'index'])->name('requisitions');
-    Route::get('/requisitions/create',          [EmployeeController::class, 'create'])->name('requisitions.create');
-    Route::post('/requisitions',                [EmployeeController::class, 'store'])->name('requisitions.store');
-    Route::get('/requisitions/{requisition}',   [EmployeeController::class, 'show'])->name('requisitions.show');
+    Route::get('/dashboard',                          [EmployeeController::class, 'dashboard'])->name('dashboard');
+    Route::get('/requisitions',                       [EmployeeController::class, 'index'])->name('requisitions');
+    Route::get('/requisitions/create',                [EmployeeController::class, 'create'])->name('requisitions.create');
+    Route::post('/requisitions',                      [EmployeeController::class, 'store'])->name('requisitions.store');
+    Route::get('/requisitions/{requisition}',         [EmployeeController::class, 'show'])->name('requisitions.show');
+    Route::delete('/requisitions/{requisition}/cancel', [EmployeeController::class, 'cancel'])->name('requisitions.cancel');
     Route::get('/stock-items', [App\Http\Controllers\StockItemController::class, 'available'])->name('stock-items');
 });
 
 // ── Accountant Routes ─────────────────────────────────────────────
 Route::middleware(['auth', 'role:accountant'])->prefix('accountant')->name('accountant.')->group(function () {
-    Route::get('/dashboard',                                        [AccountantController::class, 'dashboard'])->name('dashboard');
-    Route::get('/requisitions',                                     [AccountantController::class, 'requisitions'])->name('requisitions');
-    Route::post('/requisitions/{requisition}/status',               [AccountantController::class, 'updateStatus'])->name('requisitions.status');
-    Route::get('/requisitions/{requisition}/payment',               [AccountantController::class, 'showPaymentForm'])->name('requisitions.payment');
-    Route::post('/requisitions/{requisition}/payment',              [AccountantController::class, 'uploadPayment'])->name('requisitions.payment.store');
+    Route::get('/dashboard',                             [AccountantController::class, 'dashboard'])->name('dashboard');
+    Route::get('/requisitions',                          [AccountantController::class, 'requisitions'])->name('requisitions');
+    Route::post('/requisitions/{requisition}/status',    [AccountantController::class, 'updateStatus'])->name('requisitions.status');
+    Route::get('/requisitions/{requisition}/payment',    [AccountantController::class, 'showPaymentForm'])->name('requisitions.payment');
+    Route::post('/requisitions/{requisition}/payment',   [AccountantController::class, 'uploadPayment'])->name('requisitions.payment.store');
     Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
 });
