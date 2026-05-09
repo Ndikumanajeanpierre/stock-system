@@ -11,21 +11,39 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    public function dashboard()
-    {
-        $totalUsers            = User::count();
-        $totalRequisitions     = StockRequisition::count();
-        $pendingRequisitions   = StockRequisition::where('status', 'pending')->count();
-        $completedRequisitions = StockRequisition::where('status', 'completed')->count();
-        $totalPayments         = Payment::sum('amount');
-        $recentRequisitions    = StockRequisition::with(['user', 'department'])
-                                    ->latest()->take(5)->get();
+   public function dashboard()
+{
+    $totalUsers            = User::count();
+    $totalRequisitions     = StockRequisition::count();
+    $pendingRequisitions   = StockRequisition::where('status', 'pending')->count();
+    $completedRequisitions = StockRequisition::where('status', 'completed')->count();
+    $totalPayments         = Payment::sum('amount');
+    $recentRequisitions    = StockRequisition::with(['user', 'department'])
+                                ->latest()->take(5)->get();
 
-        return view('admin.dashboard', compact(
-            'totalUsers', 'totalRequisitions', 'pendingRequisitions',
-            'completedRequisitions', 'totalPayments', 'recentRequisitions'
-        ));
+    // Status counts for chart
+    $statusCounts = [];
+    foreach(['pending','approved','rejected','purchased','paid','completed'] as $status) {
+        $statusCounts[$status] = StockRequisition::where('status', $status)->count();
     }
+
+    // Monthly data for chart (last 6 months)
+    $monthlyLabels = [];
+    $monthlyData   = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $month = now()->subMonths($i);
+        $monthlyLabels[] = $month->format('M Y');
+        $monthlyData[]   = StockRequisition::whereYear('created_at', $month->year)
+                            ->whereMonth('created_at', $month->month)
+                            ->count();
+    }
+
+    return view('admin.dashboard', compact(
+        'totalUsers', 'totalRequisitions', 'pendingRequisitions',
+        'completedRequisitions', 'totalPayments', 'recentRequisitions',
+        'statusCounts', 'monthlyLabels', 'monthlyData'
+    ));
+}
 
     // ── Users ─────────────────────────────────────────────────────
     public function users()

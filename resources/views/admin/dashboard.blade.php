@@ -34,6 +34,30 @@
     </div>
 </div>
 
+<!-- Charts Row -->
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2"></i>Requisitions by Status</h6>
+            </div>
+            <div class="card-body" style="height:280px; display:flex; align-items:center; justify-content:center;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Monthly Requisitions (Last 6 Months)</h6>
+            </div>
+            <div class="card-body" style="height:280px; display:flex; align-items:center; justify-content:center;">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Recent Requisitions -->
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
@@ -81,4 +105,61 @@
         </table>
     </div>
 </div>
+
+<script>
+window.addEventListener('load', function() {
+    // Status Chart
+    const statusCtx = document.getElementById('statusChart');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected', 'Purchased', 'Paid', 'Completed'],
+            datasets: [{
+                data: [
+                    {{ $statusCounts['pending'] ?? 0 }},
+                    {{ $statusCounts['approved'] ?? 0 }},
+                    {{ $statusCounts['rejected'] ?? 0 }},
+                    {{ $statusCounts['purchased'] ?? 0 }},
+                    {{ $statusCounts['paid'] ?? 0 }},
+                    {{ $statusCounts['completed'] ?? 0 }}
+                ],
+                backgroundColor: ['#f7971e','#4facfe','#f5576c','#667eea','#11998e','#343a40'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { size: 11 } } }
+            }
+        }
+    });
+
+    // Monthly Chart
+    const monthlyCtx = document.getElementById('monthlyChart');
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($monthlyLabels) !!},
+            datasets: [{
+                label: 'Requisitions',
+                data: {!! json_encode($monthlyData) !!},
+                backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+});
+</script>
 @endsection
