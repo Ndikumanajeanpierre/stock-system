@@ -100,4 +100,51 @@
         </div>
     </div>
 </div>
+<!-- Comments Section -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Comments & Notes</h6>
+    </div>
+    <div class="card-body">
+        <!-- Add Comment -->
+        <form method="POST" action="{{ route('admin.requisitions.comment', $requisition) }}" class="mb-4">
+            @csrf
+            <div class="d-flex gap-2">
+                <input type="text" name="comment" class="form-control"
+                    placeholder="Add a comment or note..." required>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Comments List -->
+        @forelse($requisition->comments as $comment)
+        <div class="d-flex gap-3 mb-3">
+            <div>
+                @if($comment->user->profile_photo)
+                    <img src="{{ asset('storage/'.$comment->user->profile_photo) }}"
+                        style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                @else
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;font-weight:700;">
+                        {{ strtoupper(substr($comment->user->name, 0, 1)) }}
+                    </div>
+                @endif
+            </div>
+            <div style="background:#f8f9fa;border-radius:12px;padding:10px 15px;flex:1;">
+                <div class="d-flex justify-content-between">
+                    <strong style="font-size:0.825rem;">{{ $comment->user->name }}</strong>
+                    <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                </div>
+                <div style="font-size:0.875rem;margin-top:4px;">{{ $comment->comment }}</div>
+            </div>
+        </div>
+        @empty
+        <div class="text-center text-muted py-3">
+            <i class="fas fa-comments fa-2x mb-2 d-block"></i>
+            No comments yet.
+        </div>
+        @endforelse
+    </div>
+</div>
 @endsection

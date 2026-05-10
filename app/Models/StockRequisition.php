@@ -40,6 +40,11 @@ class StockRequisition extends Model
         return $this->hasOne(Payment::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(RequisitionComment::class, 'stock_requisition_id')->latest();
+    }
+
     public function getStatusBadgeClass(): string
     {
         return match($this->status) {

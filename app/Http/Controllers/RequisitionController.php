@@ -73,7 +73,7 @@ class RequisitionController extends Controller
 
     public function show(StockRequisition $requisition)
     {
-        $requisition->load(['user', 'department', 'approver', 'payment']);
+        $requisition->load(['user', 'department', 'approver', 'payment', 'comments.user']);
         return view('admin.show-requisition', compact('requisition'));
     }
 }
