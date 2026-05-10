@@ -4,12 +4,18 @@
 
 @section('content')
 <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Requisition - {{ $requisition->reference_number }}</h5>
+   <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Requisition - {{ $requisition->reference_number }}</h5>
+    <div class="d-flex gap-2">
+        <a href="{{ route('employee.requisitions.print', $requisition) }}" 
+            class="btn btn-sm btn-danger" target="_blank">
+            <i class="fas fa-file-pdf me-1"></i> Print PDF
+        </a>
         <a href="{{ route('employee.requisitions') }}" class="btn btn-sm btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
+</div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">

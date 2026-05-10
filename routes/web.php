@@ -97,6 +97,12 @@ Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee
     Route::post('/requisitions',                        [EmployeeController::class, 'store'])->name('requisitions.store');
     Route::get('/requisitions/{requisition}',           [EmployeeController::class, 'show'])->name('requisitions.show');
     Route::delete('/requisitions/{requisition}/cancel', [EmployeeController::class, 'cancel'])->name('requisitions.cancel');
+    Route::get('/requisitions/{requisition}/print', function(App\Models\StockRequisition $requisition) {
+        if ($requisition->user_id !== auth()->id()) abort(403);
+        $requisition->load(['department', 'payment', 'user', 'approver']);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('employee.requisition-pdf', compact('requisition'));
+        return $pdf->download('requisition-'.$requisition->reference_number.'.pdf');
+    })->name('requisitions.print');
     Route::post('/requisitions/{requisition}/comments', function(App\Models\StockRequisition $requisition, Illuminate\Http\Request $request) {
         $request->validate(['comment' => 'required|string|max:1000']);
         App\Models\RequisitionComment::create([
