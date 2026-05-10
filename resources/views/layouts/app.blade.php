@@ -327,6 +327,9 @@
                 <a href="{{ route('admin.stock-report') }}" class="nav-link {{ request()->routeIs('admin.stock-report*') ? 'active' : '' }}">
                     <div class="nav-icon"><i class="fas fa-warehouse"></i></div> Stock Report
                 </a>
+                <a href="{{ route('admin.activity-log') }}" class="nav-link {{ request()->routeIs('admin.activity-log*') ? 'active' : '' }}">
+    <div class="nav-icon"><i class="fas fa-history"></i></div> Activity Log
+</a>
 
             @elseif(auth()->user()->isAccountant())
                 <div class="sidebar-section">Main</div>

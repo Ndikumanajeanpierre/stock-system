@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StockRequisition;
 use App\Models\Department;
 use App\Models\Notification;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -64,6 +65,9 @@ class EmployeeController extends Controller
             'status'         => 'pending',
         ]);
 
+        // Log activity
+        ActivityLog::record('submitted_request', auth()->user()->name . ' submitted a new request for ' . $request->item_name, 'StockRequisition', $requisition->id);
+
         // Notify all admins
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
@@ -98,6 +102,9 @@ class EmployeeController extends Controller
             return redirect()->route('employee.requisitions')
                 ->with('error', 'Only pending requests can be cancelled!');
         }
+
+        // Log activity
+        ActivityLog::record('cancelled_request', auth()->user()->name . ' cancelled request ' . $requisition->reference_number, 'StockRequisition', $requisition->id);
 
         $requisition->delete();
 

@@ -70,6 +70,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/stock-items/{stockItem}',    [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
     Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/activity-log', function() {
+    $logs = \App\Models\ActivityLog::with('user')->latest()->paginate(20);
+    return view('admin.activity-log', compact('logs'));
+})->name('activity-log');
+    
     Route::get('/payments/{payment}/download', function(App\Models\Payment $payment) {
         $path = storage_path('app/public/' . $payment->receipt_path);
         return response()->download($path, $payment->receipt_original_name);
