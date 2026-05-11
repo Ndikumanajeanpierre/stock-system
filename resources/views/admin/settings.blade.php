@@ -40,29 +40,6 @@
                 </div>
             </div>
 
-            <!-- Stock Settings -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-boxes me-2"></i>Stock Settings</h6>
-                    <small class="text-muted">Configure stock management rules</small>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Low Stock Alert Threshold</label>
-                            <input type="number" name="low_stock_threshold" class="form-control" min="1"
-                                value="{{ $settings['low_stock_threshold'] ?? 5 }}">
-                            <small class="text-muted">Alert when stock falls below this number</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Max Requests Per Month (Per Employee)</label>
-                            <input type="number" name="max_requests_per_month" class="form-control" min="1"
-                                value="{{ $settings['max_requests_per_month'] ?? 10 }}">
-                            <small class="text-muted">Maximum requisitions an employee can submit per month</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <button type="submit" class="btn btn-primary px-5">
                 <i class="fas fa-save me-2"></i> Save Settings
@@ -92,14 +69,6 @@
                 <div class="mb-3">
                     <small class="text-muted d-block">Company Address</small>
                     <strong>{{ $settings['company_address'] ?? 'N/A' }}</strong>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted d-block">Low Stock Threshold</small>
-                    <strong>{{ $settings['low_stock_threshold'] ?? 5 }} items</strong>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted d-block">Max Requests Per Month</small>
-                    <strong>{{ $settings['max_requests_per_month'] ?? 10 }} requests</strong>
                 </div>
             </div>
         </div>
