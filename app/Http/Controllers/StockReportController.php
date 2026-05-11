@@ -41,4 +41,25 @@ class StockReportController extends Controller
             'lowStockItems', 'outOfStockItems', 'recentMovements'
         ));
     }
+    public function exportPdf()
+{
+    $stockItems      = \App\Models\StockItem::with('movements')->get();
+    $totalItems      = $stockItems->count();
+    $totalAvailable  = $stockItems->sum('quantity_available');
+    $totalValue      = $stockItems->sum(function($item) {
+        return $item->quantity_available * $item->unit_price;
+    });
+    $totalOut        = \App\Models\StockMovement::where('type', 'out')->sum('quantity');
+    $totalIn         = \App\Models\StockMovement::where('type', 'in')->sum('quantity');
+    $lowStockItems   = \App\Models\StockItem::where('quantity_available', '<', 5)->where('quantity_available', '>', 0)->get();
+    $outOfStockItems = \App\Models\StockItem::where('quantity_available', 0)->get();
+
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('stock.report-pdf', compact(
+        'stockItems', 'totalItems', 'totalAvailable',
+        'totalValue', 'totalOut', 'totalIn',
+        'lowStockItems', 'outOfStockItems'
+    ))->setPaper('a4', 'landscape');
+
+    return $pdf->download('stock-report-' . now()->format('Y-m-d') . '.pdf');
+}
 }

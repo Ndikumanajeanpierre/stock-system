@@ -3,6 +3,11 @@
 @section('title', 'Stock Report')
 
 @section('content')
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('admin.stock-report.export') }}" class="btn btn-danger">
+        <i class="fas fa-file-pdf me-2"></i> Export Stock PDF
+    </a>
+</div>
 
 <!-- Summary Cards -->
 <div class="row g-4">

@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/stock-items/{stockItem}',    [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
     Route::get('/stock-report',   [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/stock-report/export', [App\Http\Controllers\StockReportController::class, 'exportPdf'])->name('stock-report.export');
     Route::get('/settings', function() {
     $settings = \Illuminate\Support\Facades\DB::table('system_settings')->pluck('value', 'key');
     return view('admin.settings', compact('settings'));
