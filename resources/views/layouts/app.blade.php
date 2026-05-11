@@ -15,14 +15,16 @@
             overflow-x: hidden;
         }
         .sidebar {
-            min-height: 100vh;
+            height: 100vh;
             width: 260px;
             position: fixed;
             top: 0; left: 0;
             z-index: 100;
-            overflow-y: auto;
             transition: all 0.3s;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         .sidebar.accountant {
             background: linear-gradient(180deg, #1a2f1a 0%, #1e3a1e 50%, #145214 100%);
@@ -36,6 +38,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
         .sidebar-brand .brand-icon {
             width: 42px; height: 42px;
@@ -66,6 +69,14 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
+        .sidebar nav {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+        .sidebar nav::-webkit-scrollbar { width: 4px; }
+        .sidebar nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
         .sidebar .nav-link {
             color: rgba(255,255,255,0.65);
             padding: 11px 15px;
@@ -100,9 +111,7 @@
         }
         .sidebar .nav-link.active .nav-icon { background: rgba(255,255,255,0.25); }
         .sidebar-user {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
+            flex-shrink: 0;
             padding: 15px;
             border-top: 1px solid rgba(255,255,255,0.1);
             background: rgba(0,0,0,0.2);
@@ -301,7 +310,7 @@
             </div>
         </div>
 
-        <nav class="mt-2 pb-5">
+        <nav class="mt-2">
             @if(auth()->user()->isAdmin())
                 <div class="sidebar-section">Main</div>
                 <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -328,8 +337,11 @@
                     <div class="nav-icon"><i class="fas fa-warehouse"></i></div> Stock Report
                 </a>
                 <a href="{{ route('admin.activity-log') }}" class="nav-link {{ request()->routeIs('admin.activity-log*') ? 'active' : '' }}">
-    <div class="nav-icon"><i class="fas fa-history"></i></div> Activity Log
-</a>
+                    <div class="nav-icon"><i class="fas fa-history"></i></div> Activity Log
+                </a>
+                <a href="{{ route('admin.settings') }}" class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
+                    <div class="nav-icon"><i class="fas fa-cog"></i></div> Settings
+                </a>
 
             @elseif(auth()->user()->isAccountant())
                 <div class="sidebar-section">Main</div>
@@ -384,7 +396,6 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Topbar -->
         <div class="topbar">
             <div>
                 <h5 class="page-title">@yield('title', 'Dashboard')</h5>
@@ -394,8 +405,6 @@
                 <span class="role-badge role-{{ auth()->user()->role }}">
                     {{ ucfirst(auth()->user()->role) }}
                 </span>
-
-                <!-- Notification Bell -->
                 <div class="dropdown">
                     <div class="notification-btn" data-bs-toggle="dropdown">
                         <i class="fas fa-bell" style="font-size:0.9rem;"></i>
@@ -431,8 +440,6 @@
                         @endforelse
                     </ul>
                 </div>
-
-                <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-danger px-3">
@@ -442,7 +449,6 @@
             </div>
         </div>
 
-        <!-- Content -->
         <div class="content-area">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
@@ -456,7 +462,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
-
             @yield('content')
         </div>
     </div>

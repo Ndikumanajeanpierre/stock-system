@@ -79,6 +79,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/stock-items/{stockItem}',    [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
     Route::get('/stock-report',   [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/settings', function() {
+    $settings = \Illuminate\Support\Facades\DB::table('system_settings')->pluck('value', 'key');
+    return view('admin.settings', compact('settings'));
+})->name('settings');
+Route::post('/settings', function(Illuminate\Http\Request $request) {
+    $data = $request->except('_token');
+    foreach($data as $key => $value) {
+        \Illuminate\Support\Facades\DB::table('system_settings')
+            ->where('key', $key)
+            ->update(['value' => $value]);
+    }
+    return redirect()->route('admin.settings')->with('success', 'Settings updated successfully!');
+})->name('settings.update');
     Route::get('/activity-log', function() {
         $logs = \App\Models\ActivityLog::with('user')->latest()->paginate(20);
         return view('admin.activity-log', compact('logs'));
