@@ -161,7 +161,7 @@
             border-bottom: 1px solid #e9ecef;
             position: sticky;
             top: 0;
-            z-index: 99;
+            z-index: 98;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .topbar .page-title {
@@ -299,7 +299,7 @@
         }
         .form-label { font-weight: 600; font-size: 0.825rem; color: #495057; margin-bottom: 6px; }
 
-        /* ── Overlay ── */
+        /* ── Overlay (sidebar mobile) ── */
         .overlay {
             display: none;
             position: fixed;
@@ -310,32 +310,230 @@
         }
         .overlay.open { display: block; }
 
+        /* ════════════════════════════════════════
+           NOTIFICATION PANEL (slide in from right)
+        ════════════════════════════════════════ */
+        .notif-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 1049;
+            transition: opacity 0.3s;
+        }
+        .notif-overlay.open { display: block; }
+
+        .notif-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;          /* hidden off-screen */
+            width: 380px;
+            height: 100vh;
+            background: #fff;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+            transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+            border-radius: 16px 0 0 16px;
+        }
+        .notif-panel.open { right: 0; }
+
+        .notif-panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px 0 0 0;
+        }
+        .notif-panel-header h6 {
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 0;
+        }
+        .notif-panel-header .notif-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notif-panel-header .mark-all-btn {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .notif-panel-header .mark-all-btn:hover {
+            background: rgba(255,255,255,0.35);
+            color: white;
+        }
+        .notif-close-btn {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .notif-close-btn:hover { background: rgba(255,255,255,0.35); }
+
+        .notif-panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        .notif-panel-body::-webkit-scrollbar { width: 4px; }
+        .notif-panel-body::-webkit-scrollbar-track { background: transparent; }
+        .notif-panel-body::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }
+
+        .notif-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #f8f8f8;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.15s;
+        }
+        .notif-item:hover { background: #f8f9ff; color: inherit; }
+        .notif-item.unread { background: #f0f4ff; }
+        .notif-item.unread:hover { background: #e8eeff; }
+
+        .notif-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+        .notif-item-content { flex: 1; min-width: 0; }
+        .notif-item-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .notif-item.read .notif-item-title { font-weight: 400; color: #495057; }
+        .notif-item-msg {
+            font-size: 0.77rem;
+            color: #6c757d;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .notif-item-time {
+            font-size: 0.7rem;
+            color: #adb5bd;
+            margin-top: 4px;
+        }
+
+        .notif-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #adb5bd;
+            gap: 12px;
+        }
+        .notif-empty i { font-size: 2.5rem; opacity: 0.4; }
+        .notif-empty p { font-size: 0.85rem; margin: 0; }
+
+        .notif-panel-footer {
+            flex-shrink: 0;
+            padding: 14px 20px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #667eea;
+            font-weight: 600;
+            background: #fafafa;
+            border-radius: 0 0 0 16px;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 991px) {
-            .sidebar {
-                transform: translateX(-260px);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
-            }
+            .sidebar { transform: translateX(-260px); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; width: 100% !important; }
             .topbar { padding: 10px 15px; }
             .content-area { padding: 15px; }
             .stat-card { margin-bottom: 15px; }
         }
-
         @media (max-width: 576px) {
             .topbar .page-subtitle { display: none; }
             .topbar .role-badge { display: none; }
+            .notif-panel { width: 100%; border-radius: 0; }
         }
     </style>
 </head>
 <body>
-    <!-- Overlay -->
+
+    <!-- Sidebar mobile overlay -->
     <div class="overlay" id="overlay"></div>
+
+    <!-- ── Notification Panel Overlay ── -->
+    <div class="notif-overlay" id="notifOverlay"></div>
+
+    <!-- ── Notification Slide Panel ── -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h6><i class="fas fa-bell me-2"></i>Notifications</h6>
+            <div class="notif-actions">
+                @if(auth()->user()->unreadNotifications()->count() > 0)
+                    <a href="{{ route('notifications.readall') }}" class="mark-all-btn">
+                        <i class="fas fa-check-double me-1"></i> Mark all read
+                    </a>
+                @endif
+                <button class="notif-close-btn" id="notifCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="notif-panel-body">
+            @forelse(auth()->user()->notifications()->take(15)->get() as $notification)
+                <a class="notif-item {{ !$notification->is_read ? 'unread' : 'read' }}"
+                   href="{{ route('notifications.read', $notification) }}">
+                    <div class="notif-dot" style="background:{{ $notification->type == 'success' ? '#27ae60' : ($notification->type == 'danger' ? '#e74c3c' : '#3498db') }};"></div>
+                    <div class="notif-item-content">
+                        <div class="notif-item-title">{{ $notification->title }}</div>
+                        <div class="notif-item-msg">{{ $notification->message }}</div>
+                        <div class="notif-item-time">
+                            <i class="fas fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="notif-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No notifications yet</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="notif-panel-footer">
+            <i class="fas fa-inbox me-1"></i>
+            {{ auth()->user()->notifications()->count() }} total notification(s)
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <div class="sidebar {{ auth()->user()->isAccountant() ? 'accountant' : (auth()->user()->isEmployee() ? 'employee' : '') }}">
@@ -412,7 +610,6 @@
             @endif
         </nav>
 
-        <!-- Sidebar User -->
         <div class="sidebar-user">
             <a href="{{ route('profile.settings') }}" style="text-decoration:none;">
                 <div class="user-info">
@@ -448,41 +645,17 @@
                 <span class="role-badge role-{{ auth()->user()->role }}">
                     {{ ucfirst(auth()->user()->role) }}
                 </span>
-                <div class="dropdown">
-                    <div class="notification-btn" data-bs-toggle="dropdown">
-                        <i class="fas fa-bell" style="font-size:0.9rem;"></i>
-                        @if(auth()->user()->unreadNotifications()->count() > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">
-                                {{ auth()->user()->unreadNotifications()->count() }}
-                            </span>
-                        @endif
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" style="width:340px; max-height:420px; overflow-y:auto; border-radius:12px; border:none;">
-                        <li class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom">
-                            <strong style="font-size:0.875rem;">Notifications</strong>
-                            @if(auth()->user()->unreadNotifications()->count() > 0)
-                                <a href="{{ route('notifications.readall') }}" class="text-primary" style="font-size:0.75rem;">Mark all read</a>
-                            @endif
-                        </li>
-                        @forelse(auth()->user()->notifications()->take(10)->get() as $notification)
-                        <li>
-                            <a class="dropdown-item py-2 px-3 {{ !$notification->is_read ? 'bg-light' : '' }}"
-                                href="{{ route('notifications.read', $notification) }}">
-                                <div class="d-flex gap-2">
-                                    <div style="width:8px;height:8px;border-radius:50%;background:{{ $notification->type == 'success' ? '#27ae60' : ($notification->type == 'danger' ? '#e74c3c' : '#3498db') }};flex-shrink:0;margin-top:5px;"></div>
-                                    <div>
-                                        <div style="font-size:0.8rem;font-weight:{{ !$notification->is_read ? '600' : '400' }}">{{ $notification->title }}</div>
-                                        <div style="font-size:0.75rem;color:#666;">{{ $notification->message }}</div>
-                                        <div style="font-size:0.7rem;color:#999;">{{ $notification->created_at->diffForHumans() }}</div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        @empty
-                        <li><div class="text-center text-muted py-4" style="font-size:0.85rem;">No notifications</div></li>
-                        @endforelse
-                    </ul>
+
+                <!-- Bell button — opens slide panel -->
+                <div class="notification-btn" id="notifToggleBtn" title="Notifications">
+                    <i class="fas fa-bell" style="font-size:0.9rem;"></i>
+                    @if(auth()->user()->unreadNotifications()->count() > 0)
+                        <span style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:#e74c3c;color:white;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid white;">
+                            {{ auth()->user()->unreadNotifications()->count() > 9 ? '9+' : auth()->user()->unreadNotifications()->count() }}
+                        </span>
+                    @endif
                 </div>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-danger px-3">
@@ -512,7 +685,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Show hamburger on small screens
+        // ── Sidebar mobile toggle ──
         function checkScreen() {
             const btn = document.getElementById('menuToggle');
             if (window.innerWidth <= 991) {
@@ -526,14 +699,44 @@
         checkScreen();
         window.addEventListener('resize', checkScreen);
 
-        document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('menuToggle').addEventListener('click', function () {
             document.querySelector('.sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('open');
         });
 
-        document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('overlay').addEventListener('click', function () {
             document.querySelector('.sidebar').classList.remove('open');
             document.getElementById('overlay').classList.remove('open');
+        });
+
+        // ── Notification slide panel ──
+        const notifToggleBtn = document.getElementById('notifToggleBtn');
+        const notifPanel     = document.getElementById('notifPanel');
+        const notifOverlay   = document.getElementById('notifOverlay');
+        const notifCloseBtn  = document.getElementById('notifCloseBtn');
+
+        function openNotifPanel() {
+            notifPanel.classList.add('open');
+            notifOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden'; // prevent background scroll
+        }
+
+        function closeNotifPanel() {
+            notifPanel.classList.remove('open');
+            notifOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        notifToggleBtn.addEventListener('click', function () {
+            notifPanel.classList.contains('open') ? closeNotifPanel() : openNotifPanel();
+        });
+
+        notifCloseBtn.addEventListener('click', closeNotifPanel);
+        notifOverlay.addEventListener('click', closeNotifPanel);
+
+        // Close with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeNotifPanel();
         });
     </script>
 </body>
