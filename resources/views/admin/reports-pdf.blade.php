@@ -32,7 +32,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>📦 StockSys — Requisition Report</h1>
+        <h1>StockSys - Requisition Report</h1>
         <p>Generated on {{ now()->format('d M Y H:i') }}</p>
     </div>
 
@@ -49,7 +49,7 @@
                 <strong style="font-size:18px;">{{ $totalPaid }}</strong><br>Paid/Completed
             </td>
             <td style="background:#764ba2;color:white;padding:10px;border-radius:8px;text-align:center;">
-                <strong style="font-size:18px;">${{ number_format($totalAmount, 2) }}</strong><br>Total Payments
+                <strong style="font-size:18px;">RWF {{ number_format($totalAmount, 2) }}</strong><br>Total Payments
             </td>
         </tr>
     </table>
@@ -85,7 +85,7 @@
                         {{ ucfirst($req->status) }}
                     </span>
                 </td>
-                <td>{{ $req->payment ? '$'.number_format($req->payment->amount, 2) : 'N/A' }}</td>
+                <td>{{ $req->payment ? 'RWF '.number_format($req->payment->amount, 2) : 'N/A' }}</td>
                 <td>{{ $req->created_at->format('d M Y') }}</td>
             </tr>
             @empty

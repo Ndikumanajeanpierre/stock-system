@@ -43,13 +43,14 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h6 class="mb-1">Total Payments</h6>
-                    <h2 class="mb-0">${{ number_format($totalAmount, 2) }}</h2>
+                    <h2 class="mb-0">RWF {{ number_format($totalAmount, 2) }}</h2>
                 </div>
-                <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+                <i class="fas fa-money-bill-wave fa-2x opacity-75"></i>
             </div>
         </div>
     </div>
 </div>
+
 <div class="d-flex justify-content-end mb-3">
     <a href="{{ route('admin.reports.export-pdf', request()->query()) }}" class="btn btn-danger">
         <i class="fas fa-file-pdf me-2"></i> Export PDF
@@ -154,7 +155,7 @@
                             <td style="font-size:13px;">{{ $req->item_name }}</td>
                             <td style="font-size:13px;">{{ $req->department->name }}</td>
                             <td><span class="badge bg-{{ $req->getStatusBadgeClass() }}">{{ ucfirst($req->status) }}</span></td>
-                            <td style="font-size:13px;">{{ $req->payment ? '$'.number_format($req->payment->amount,2) : 'N/A' }}</td>
+                            <td style="font-size:13px;">{{ $req->payment ? 'RWF '.number_format($req->payment->amount, 2) : 'N/A' }}</td>
                             <td style="font-size:13px;">{{ $req->created_at->format('d M Y') }}</td>
                         </tr>
                         @empty

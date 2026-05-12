@@ -26,7 +26,7 @@
                                 data-price="{{ $item->unit_price }}"
                                 data-unit="{{ $item->unit }}"
                                 data-available="{{ $item->quantity_available }}">
-                                {{ $item->name }} — ${{ number_format($item->unit_price, 2) }} per {{ $item->unit }}
+                                {{ $item->name }} — RWF {{ number_format($item->unit_price, 2) }} per {{ $item->unit }}
                                 ({{ $item->quantity_available }} available)
                             </option>
                         @endforeach

@@ -21,7 +21,7 @@
                     <tr><th>Quantity</th><td>{{ $requisition->quantity }} {{ $requisition->unit }}</td></tr>
                     <tr><th>Priority</th><td><span class="badge bg-{{ $requisition->getPriorityBadgeClass() }}">{{ ucfirst($requisition->priority) }}</span></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-{{ $requisition->getStatusBadgeClass() }}">{{ ucfirst($requisition->status) }}</span></td></tr>
-                    <tr><th>Estimated Cost</th><td>{{ $requisition->estimated_cost ? '$'.$requisition->estimated_cost : 'N/A' }}</td></tr>
+                    <tr><th>Estimated Cost</th><td>{{ $requisition->estimated_cost ? 'RWF '.$requisition->estimated_cost : 'N/A' }}</td></tr>
                     <tr><th>Description</th><td>{{ $requisition->description ?? 'N/A' }}</td></tr>
                     <tr><th>Submitted</th><td>{{ $requisition->created_at->format('d M Y H:i') }}</td></tr>
                 </table>
@@ -44,7 +44,7 @@
                @if($requisition->payment)
 <div class="alert alert-success">
     <strong>Payment Info</strong><br>
-    Amount: ${{ $requisition->payment->amount }}<br>
+    Amount: RWF {{ $requisition->payment->amount }}<br>
     Method: {{ $requisition->payment->payment_method }}<br>
     Date: {{ $requisition->payment->payment_date->format('d M Y') }}<br>
     Transaction Ref: {{ $requisition->payment->transaction_reference ?? 'N/A' }}<br>

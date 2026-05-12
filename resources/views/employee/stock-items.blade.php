@@ -31,7 +31,7 @@
                     <td><strong>{{ $item->name }}</strong></td>
                     <td>{{ $item->category ?? 'N/A' }}</td>
                     <td>{{ ucfirst($item->unit) }}</td>
-                    <td><strong class="text-success">${{ number_format($item->unit_price, 2) }}</strong></td>
+                    <td><strong class="text-success">RWF {{ number_format($item->unit_price, 2) }}</strong></td>
                     <td>
                         <span class="badge bg-{{ $item->quantity_available > 0 ? 'success' : 'danger' }}">
                             {{ $item->quantity_available }} {{ $item->unit }}

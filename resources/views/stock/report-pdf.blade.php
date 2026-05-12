@@ -42,7 +42,7 @@
             <td width="2%"></td>
             <td class="s2" style="width:20%"><strong>{{ $totalAvailable }}</strong>Total Available</td>
             <td width="2%"></td>
-            <td class="s3" style="width:20%"><strong>${{ number_format($totalValue, 0) }}</strong>Stock Value</td>
+            <td class="s3" style="width:20%"><strong>RWF {{ number_format($totalValue, 0) }}</strong>Stock Value</td>
             <td width="2%"></td>
             <td class="s4" style="width:20%"><strong>{{ $totalIn }}</strong>Total In</td>
             <td width="2%"></td>
@@ -83,11 +83,11 @@
                 <td><strong>{{ $item->name }}</strong></td>
                 <td>{{ $item->category ?? 'N/A' }}</td>
                 <td>{{ $item->unit }}</td>
-                <td>${{ number_format($item->unit_price, 2) }}</td>
+                <td>RWF {{ number_format($item->unit_price, 2) }}</td>
                 <td>{{ $item->totalIn() }}</td>
                 <td>{{ $item->totalOut() }}</td>
                 <td><strong>{{ $item->quantity_available }}</strong></td>
-                <td><strong>${{ number_format($item->quantity_available * $item->unit_price, 2) }}</strong></td>
+                <td><strong>RWF {{ number_format($item->quantity_available * $item->unit_price, 2) }}</strong></td>
                 <td>
                     @if($item->quantity_available == 0)
                         <span class="badge out-stock">Out of Stock</span>

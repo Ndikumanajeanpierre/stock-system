@@ -21,7 +21,7 @@
                     <p><strong>Employee:</strong> {{ $requisition->user->name }}</p>
                     <p><strong>Item:</strong> {{ $requisition->item_name }}</p>
                     <p><strong>Quantity:</strong> {{ $requisition->quantity }} {{ $requisition->unit }}</p>
-                    <p><strong>Estimated Cost:</strong> {{ $requisition->estimated_cost ? '$'.$requisition->estimated_cost : 'N/A' }}</p>
+                    <p><strong>Estimated Cost:</strong> {{ $requisition->estimated_cost ? 'RWF '.$requisition->estimated_cost : 'N/A' }}</p>
                     <p class="mb-0"><strong>Status:</strong>
                         <span class="badge bg-{{ $requisition->getStatusBadgeClass() }}">
                             {{ ucfirst($requisition->status) }}

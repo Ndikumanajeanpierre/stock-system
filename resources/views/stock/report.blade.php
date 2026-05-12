@@ -27,8 +27,8 @@
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #f7971e, #ffd200);">
-            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="stat-number">${{ number_format($totalValue, 0) }}</div>
+            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-number">RWF {{ number_format($totalValue, 0) }}</div>
             <div class="stat-label">Total Stock Value</div>
         </div>
     </div>
@@ -82,7 +82,7 @@
                             <td><strong>{{ $item->name }}</strong></td>
                             <td>{{ $item->category ?? 'N/A' }}</td>
                             <td><span class="badge bg-warning text-dark">{{ $item->quantity_available }} {{ $item->unit }}</span></td>
-                            <td>${{ number_format($item->unit_price, 2) }}</td>
+                            <td>RWF {{ number_format($item->unit_price, 2) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -120,7 +120,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td><strong>{{ $item->name }}</strong><br><small class="text-muted">{{ $item->unit }}</small></td>
                             <td>{{ $item->category ?? 'N/A' }}</td>
-                            <td>${{ number_format($item->unit_price, 2) }}</td>
+                            <td>RWF {{ number_format($item->unit_price, 2) }}</td>
                             <td><span class="badge bg-info">{{ $item->totalIn() }}</span></td>
                             <td><span class="badge bg-danger">{{ $item->totalOut() }}</span></td>
                             <td>
@@ -128,7 +128,7 @@
                                     {{ $item->quantity_available }}
                                 </span>
                             </td>
-                            <td><strong class="text-success">${{ number_format($item->quantity_available * $item->unit_price, 2) }}</strong></td>
+                            <td><strong class="text-success">RWF {{ number_format($item->quantity_available * $item->unit_price, 2) }}</strong></td>
                             <td>
                                 @if($item->quantity_available == 0)
                                     <span class="badge bg-danger">Out of Stock</span>

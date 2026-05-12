@@ -59,7 +59,7 @@
                     {{ strtoupper($requisition->priority) }}
                 </span>
             </td></tr>
-            <tr><td>Estimated Cost</td><td>{{ $requisition->estimated_cost ? '$'.$requisition->estimated_cost : 'N/A' }}</td></tr>
+           <tr><td>Estimated Cost</td><td>{{ $requisition->estimated_cost ? 'RWF '.number_format($requisition->estimated_cost, 2) : 'N/A' }}</td></tr>
             <tr><td>Description</td><td>{{ $requisition->description ?? 'N/A' }}</td></tr>
             <tr><td>Submitted On</td><td>{{ $requisition->created_at->format('d M Y H:i') }}</td></tr>
         </table>

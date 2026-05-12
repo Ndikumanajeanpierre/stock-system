@@ -27,8 +27,8 @@
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="stat-number">${{ number_format($totalPayments, 0) }}</div>
+            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-number">RWF {{ number_format($totalPayments, 0) }}</div>
             <div class="stat-label">Total Payments</div>
         </div>
     </div>
@@ -87,7 +87,7 @@
                 <tr>
                     <td><span class="fw-bold text-primary">{{ $payment->requisition->reference_number }}</span></td>
                     <td>{{ $payment->requisition->item_name }}</td>
-                    <td><span class="fw-bold text-success">${{ number_format($payment->amount, 2) }}</span></td>
+                    <td><span class="fw-bold text-success">RWF {{ number_format($payment->amount, 2) }}</span></td>
                     <td>{{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}</td>
                     <td>{{ $payment->payment_date->format('d M Y') }}</td>
                 </tr>

@@ -34,7 +34,7 @@
                             {{ ucfirst($requisition->status) }}
                         </span>
                     </td></tr>
-                    <tr><th>Estimated Cost</th><td>{{ $requisition->estimated_cost ? '$'.$requisition->estimated_cost : 'N/A' }}</td></tr>
+                    <tr><th>Estimated Cost</th><td>{{ $requisition->estimated_cost ? 'RWF '.$requisition->estimated_cost : 'N/A' }}</td></tr>
                     <tr><th>Description</th><td>{{ $requisition->description ?? 'N/A' }}</td></tr>
                     <tr><th>Submitted</th><td>{{ $requisition->created_at->format('d M Y H:i') }}</td></tr>
                 </table>
@@ -87,7 +87,7 @@
             <strong>Payment Uploaded</strong>
             @if($requisition->payment)
             <br>
-            <small>Amount: ${{ number_format($requisition->payment->amount, 2) }}</small><br>
+            <small>Amount: RWF {{ number_format($requisition->payment->amount, 2) }}</small><br>
             <a href="{{ asset('storage/'.$requisition->payment->receipt_path) }}"
                 target="_blank" class="btn btn-sm btn-info mt-1 me-1">
                 <i class="fas fa-eye me-1"></i> View Receipt

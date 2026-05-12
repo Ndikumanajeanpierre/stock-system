@@ -37,7 +37,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Unit Price ($)</label>
+                        <label class="form-label fw-bold">Unit Price (RWF)</label>
                         <input type="number" name="unit_price" step="0.01" min="0"
                             class="form-control @error('unit_price') is-invalid @enderror"
                             value="{{ old('unit_price') }}" placeholder="0.00" required>
@@ -91,7 +91,7 @@
                                 <small class="text-muted">{{ $item->unit }}</small>
                             </td>
                             <td>{{ $item->category ?? 'N/A' }}</td>
-                            <td><strong>${{ number_format($item->unit_price, 2) }}</strong></td>
+                            <td><strong>RWF {{ number_format($item->unit_price, 2) }}</strong></td>
                             <td>
                                 <span class="badge bg-{{ $item->quantity_available > 0 ? 'success' : 'danger' }}">
                                     {{ $item->quantity_available }}
@@ -146,7 +146,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Unit Price ($)</label>
+                                                <label class="form-label">Unit Price (RWF)</label>
                                                 <input type="number" name="unit_price" step="0.01" min="0" class="form-control" value="{{ $item->unit_price }}" required>
                                             </div>
                                             <div class="mb-3">
