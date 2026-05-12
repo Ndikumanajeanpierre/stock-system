@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StockRequisition;
+use App\Models\StockItem;
 use App\Models\Department;
 use App\Models\Notification;
 use App\Models\ActivityLog;
@@ -53,6 +54,20 @@ class EmployeeController extends Controller
             'estimated_cost' => 'nullable|numeric|min:0',
         ]);
 
+        // ── Stock quantity check ──────────────────────────────────────────
+        $stockItem = StockItem::where('name', $request->item_name)->first();
+
+        if ($stockItem) {
+            if ($request->quantity > $stockItem->quantity_available) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors([
+                        'quantity' => "You requested {$request->quantity} but only {$stockItem->quantity_available} unit(s) of \"{$stockItem->name}\" are available in stock. Please reduce your quantity.",
+                    ]);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────
+
         $requisition = StockRequisition::create([
             'user_id'        => auth()->id(),
             'department_id'  => $request->department_id,
@@ -65,10 +80,13 @@ class EmployeeController extends Controller
             'status'         => 'pending',
         ]);
 
-        // Log activity
-        ActivityLog::record('submitted_request', auth()->user()->name . ' submitted a new request for ' . $request->item_name, 'StockRequisition', $requisition->id);
+        ActivityLog::record(
+            'submitted_request',
+            auth()->user()->name . ' submitted a new request for ' . $request->item_name,
+            'StockRequisition',
+            $requisition->id
+        );
 
-        // Notify all admins
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::send(
@@ -103,8 +121,12 @@ class EmployeeController extends Controller
                 ->with('error', 'Only pending requests can be cancelled!');
         }
 
-        // Log activity
-        ActivityLog::record('cancelled_request', auth()->user()->name . ' cancelled request ' . $requisition->reference_number, 'StockRequisition', $requisition->id);
+        ActivityLog::record(
+            'cancelled_request',
+            auth()->user()->name . ' cancelled request ' . $requisition->reference_number,
+            'StockRequisition',
+            $requisition->id
+        );
 
         $requisition->delete();
 

@@ -19,8 +19,8 @@
             width: 260px;
             position: fixed;
             top: 0; left: 0;
-            z-index: 100;
-            transition: all 0.3s;
+            z-index: 1000;
+            transition: transform 0.3s ease;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             display: flex;
             flex-direction: column;
@@ -185,7 +185,7 @@
         .role-admin { background: #fef3cd; color: #856404; }
         .role-accountant { background: #d4edda; color: #155724; }
         .role-employee { background: #cce5ff; color: #004085; }
-        .content-area { padding: 25px 30px; }
+        .content-area { padding: 25px 30px; overflow-x: auto; }
         .card {
             border: none;
             border-radius: 16px;
@@ -199,6 +199,7 @@
             border-radius: 16px 16px 0 0 !important;
             padding: 18px 20px;
         }
+        .card-body { overflow-x: auto; }
         .stat-card {
             border-radius: 16px;
             padding: 22px;
@@ -297,9 +298,45 @@
             box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
         }
         .form-label { font-weight: 600; font-size: 0.825rem; color: #495057; margin-bottom: 6px; }
+
+        /* ── Overlay ── */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .overlay.open { display: block; }
+
+        /* ── Responsive ── */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-260px);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .topbar { padding: 10px 15px; }
+            .content-area { padding: 15px; }
+            .stat-card { margin-bottom: 15px; }
+        }
+
+        @media (max-width: 576px) {
+            .topbar .page-subtitle { display: none; }
+            .topbar .role-badge { display: none; }
+        }
     </style>
 </head>
 <body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
     <!-- Sidebar -->
     <div class="sidebar {{ auth()->user()->isAccountant() ? 'accountant' : (auth()->user()->isEmployee() ? 'employee' : '') }}">
         <div class="sidebar-brand">
@@ -397,9 +434,15 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
-            <div>
-                <h5 class="page-title">@yield('title', 'Dashboard')</h5>
-                <p class="page-subtitle">{{ now()->format('l, d F Y') }}</p>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-light" id="menuToggle"
+                    style="border:1px solid #e9ecef; display:none;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h5 class="page-title">@yield('title', 'Dashboard')</h5>
+                    <p class="page-subtitle">{{ now()->format('l, d F Y') }}</p>
+                </div>
             </div>
             <div class="topbar-actions">
                 <span class="role-badge role-{{ auth()->user()->role }}">
@@ -468,5 +511,30 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Show hamburger on small screens
+        function checkScreen() {
+            const btn = document.getElementById('menuToggle');
+            if (window.innerWidth <= 991) {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+                document.querySelector('.sidebar').classList.remove('open');
+                document.getElementById('overlay').classList.remove('open');
+            }
+        }
+        checkScreen();
+        window.addEventListener('resize', checkScreen);
+
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('open');
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+        });
+    </script>
 </body>
 </html>
