@@ -3,50 +3,177 @@
 @section('title', 'Reports')
 
 @section('content')
+
+<style>
+.report-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.report-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+.report-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+.report-card .rc-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.rc-icon.ic-blue   { background: #3b82f6; }
+.rc-icon.ic-amber  { background: #f59e0b; }
+.rc-icon.ic-green  { background: #10b981; }
+.rc-icon.ic-violet { background: #8b5cf6; }
+
+.report-card .rc-body { flex: 1; min-width: 0; }
+.report-card .rc-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.report-card .rc-value.small-val { font-size: 1.1rem; }
+.report-card .rc-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.report-card::after {
+    content: '';
+    position: absolute;
+    right: -10px; top: -10px;
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    opacity: 0.06;
+}
+.report-card.c-blue::after   { background: #3b82f6; }
+.report-card.c-amber::after  { background: #f59e0b; }
+.report-card.c-green::after  { background: #10b981; }
+.report-card.c-violet::after { background: #8b5cf6; }
+
+/* Filter card */
+.filter-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.filter-card .filter-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-card .filter-header h6 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #111827;
+}
+.filter-card .filter-body { padding: 16px 20px; }
+
+/* Table cards */
+.tbl-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+.tbl-card .tbl-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tbl-card .tbl-header h6 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #111827;
+}
+.tbl-card table thead tr th {
+    font-size: 0.72rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: #f9fafb;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.tbl-card table tbody tr td {
+    padding: 10px 14px;
+    font-size: 0.845rem;
+    color: #374151;
+    border-bottom: 1px solid #f9fafb;
+    vertical-align: middle;
+}
+
+@media (max-width: 992px) {
+    .report-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+    .report-cards { grid-template-columns: 1fr; }
+}
+</style>
+
 <!-- Summary Cards -->
-<div class="row mb-3">
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="mb-1">Total Requisitions</h6>
-                    <h2 class="mb-0">{{ $totalRequisitions }}</h2>
-                </div>
-                <i class="fas fa-list fa-2x opacity-75"></i>
-            </div>
+<div class="report-cards">
+    <div class="report-card c-blue">
+        <div class="rc-icon ic-blue"><i class="fas fa-list"></i></div>
+        <div class="rc-body">
+            <div class="rc-value">{{ $totalRequisitions }}</div>
+            <div class="rc-label">Total Requisitions</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="mb-1">Pending</h6>
-                    <h2 class="mb-0">{{ $totalPending }}</h2>
-                </div>
-                <i class="fas fa-clock fa-2x opacity-75"></i>
-            </div>
+    <div class="report-card c-amber">
+        <div class="rc-icon ic-amber"><i class="fas fa-clock"></i></div>
+        <div class="rc-body">
+            <div class="rc-value">{{ $totalPending }}</div>
+            <div class="rc-label">Pending</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="mb-1">Paid/Completed</h6>
-                    <h2 class="mb-0">{{ $totalPaid }}</h2>
-                </div>
-                <i class="fas fa-check-circle fa-2x opacity-75"></i>
-            </div>
+    <div class="report-card c-green">
+        <div class="rc-icon ic-green"><i class="fas fa-check-circle"></i></div>
+        <div class="rc-body">
+            <div class="rc-value">{{ $totalPaid }}</div>
+            <div class="rc-label">Paid / Completed</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="mb-1">Total Payments</h6>
-                    <h2 class="mb-0">RWF {{ number_format($totalAmount, 2) }}</h2>
-                </div>
-                <i class="fas fa-money-bill-wave fa-2x opacity-75"></i>
-            </div>
+    <div class="report-card c-violet">
+        <div class="rc-icon ic-violet"><i class="fas fa-money-bill-wave"></i></div>
+        <div class="rc-body">
+            <div class="rc-value small-val">RWF {{ number_format($totalAmount, 2) }}</div>
+            <div class="rc-label">Total Payments</div>
         </div>
     </div>
 </div>
@@ -58,12 +185,15 @@
 </div>
 
 <!-- Filters -->
-<div class="card mb-3">
-    <div class="card-header"><h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Report</h5></div>
-    <div class="card-body">
-        <form method="GET" class="row g-2">
+<div class="filter-card">
+    <div class="filter-header">
+        <span style="color:#3b82f6;"><i class="fas fa-filter"></i></span>
+        <h6>Filter Report</h6>
+    </div>
+    <div class="filter-body">
+        <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
-                <label class="form-label">Status</label>
+                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#374151;">Status</label>
                 <select name="status" class="form-select form-select-sm">
                     <option value="">All Statuses</option>
                     @foreach(['pending','approved','rejected','purchased','paid','completed'] as $s)
@@ -74,7 +204,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label">Department</label>
+                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#374151;">Department</label>
                 <select name="department_id" class="form-select form-select-sm">
                     <option value="">All Departments</option>
                     @foreach($departments as $dept)
@@ -85,19 +215,19 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Date From</label>
+                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#374151;">Date From</label>
                 <input type="date" name="date_from" class="form-control form-control-sm" value="{{ request('date_from') }}">
             </div>
             <div class="col-md-2">
-                <label class="form-label">Date To</label>
+                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#374151;">Date To</label>
                 <input type="date" name="date_to" class="form-control form-control-sm" value="{{ request('date_to') }}">
             </div>
-            <div class="col-md-2 d-flex align-items-end gap-2">
+            <div class="col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary btn-sm w-100">
-                    <i class="fas fa-search"></i> Filter
+                    <i class="fas fa-search me-1"></i> Filter
                 </button>
                 <a href="{{ route('admin.reports') }}" class="btn btn-secondary btn-sm w-100">
-                    <i class="fas fa-redo"></i> Reset
+                    <i class="fas fa-redo me-1"></i> Reset
                 </a>
             </div>
         </form>
@@ -105,66 +235,65 @@
 </div>
 
 <!-- Department Breakdown + Requisitions Table -->
-<div class="row">
+<div class="row g-3">
     <div class="col-md-3">
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-building me-2"></i>By Department</h6>
+        <div class="tbl-card">
+            <div class="tbl-header">
+                <span style="color:#3b82f6;"><i class="fas fa-building"></i></span>
+                <h6>By Department</h6>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-sm mb-0">
-                    <thead class="table-light">
-                        <tr><th>Department</th><th>Total</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach($departmentStats as $stat)
-                        <tr>
-                            <td style="font-size:13px;">{{ $stat->department->name ?? 'N/A' }}</td>
-                            <td><span class="badge bg-primary">{{ $stat->total }}</span></td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <table class="table mb-0">
+                <thead>
+                    <tr><th>Department</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                    @foreach($departmentStats as $stat)
+                    <tr>
+                        <td>{{ $stat->department->name ?? 'N/A' }}</td>
+                        <td><span class="badge bg-primary">{{ $stat->total }}</span></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 
     <div class="col-md-9">
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Requisitions ({{ $totalRequisitions }})</h6>
+        <div class="tbl-card">
+            <div class="tbl-header">
+                <span style="color:#3b82f6;"><i class="fas fa-list"></i></span>
+                <h6>Requisitions ({{ $totalRequisitions }})</h6>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-hover table-sm mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Reference</th>
-                            <th>Employee</th>
-                            <th>Item</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($requisitions as $req)
-                        <tr>
-                            <td style="font-size:13px;">{{ $req->reference_number }}</td>
-                            <td style="font-size:13px;">{{ $req->user->name }}</td>
-                            <td style="font-size:13px;">{{ $req->item_name }}</td>
-                            <td style="font-size:13px;">{{ $req->department->name }}</td>
-                            <td><span class="badge bg-{{ $req->getStatusBadgeClass() }}">{{ ucfirst($req->status) }}</span></td>
-                            <td style="font-size:13px;">{{ $req->payment ? 'RWF '.number_format($req->payment->amount, 2) : 'N/A' }}</td>
-                            <td style="font-size:13px;">{{ $req->created_at->format('d M Y') }}</td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="7" class="text-center py-3">No records found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Employee</th>
+                        <th>Item</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($requisitions as $req)
+                    <tr>
+                        <td><span class="fw-bold text-primary">{{ $req->reference_number }}</span></td>
+                        <td>{{ $req->user->name }}</td>
+                        <td>{{ $req->item_name }}</td>
+                        <td>{{ $req->department->name }}</td>
+                        <td><span class="badge bg-{{ $req->getStatusBadgeClass() }}">{{ ucfirst($req->status) }}</span></td>
+                        <td>{{ $req->payment ? 'RWF '.number_format($req->payment->amount, 2) : 'N/A' }}</td>
+                        <td style="color:#6b7280;">{{ $req->created_at->format('d M Y') }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="7" class="text-center py-4 text-muted">No records found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 @endsection
