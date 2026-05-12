@@ -78,21 +78,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/stock-items',       [App\Http\Controllers\StockItemController::class, 'store'])->name('stock-items.store');
     Route::put('/stock-items/{stockItem}',    [App\Http\Controllers\StockItemController::class, 'update'])->name('stock-items.update');
     Route::delete('/stock-items/{stockItem}', [App\Http\Controllers\StockItemController::class, 'destroy'])->name('stock-items.destroy');
-    Route::get('/stock-report',   [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/stock-report',        [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
     Route::get('/stock-report/export', [App\Http\Controllers\StockReportController::class, 'exportPdf'])->name('stock-report.export');
     Route::get('/settings', function() {
-    $settings = \Illuminate\Support\Facades\DB::table('system_settings')->pluck('value', 'key');
-    return view('admin.settings', compact('settings'));
-})->name('settings');
-Route::post('/settings', function(Illuminate\Http\Request $request) {
-    $data = $request->except('_token');
-    foreach($data as $key => $value) {
-        \Illuminate\Support\Facades\DB::table('system_settings')
-            ->where('key', $key)
-            ->update(['value' => $value]);
-    }
-    return redirect()->route('admin.settings')->with('success', 'Settings updated successfully!');
-})->name('settings.update');
+        $settings = \Illuminate\Support\Facades\DB::table('system_settings')->pluck('value', 'key');
+        return view('admin.settings', compact('settings'));
+    })->name('settings');
+    Route::post('/settings', function(Illuminate\Http\Request $request) {
+        $data = $request->except('_token');
+        foreach($data as $key => $value) {
+            \Illuminate\Support\Facades\DB::table('system_settings')
+                ->where('key', $key)
+                ->update(['value' => $value]);
+        }
+        return redirect()->route('admin.settings')->with('success', 'Settings updated successfully!');
+    })->name('settings.update');
     Route::get('/activity-log', function() {
         $logs = \App\Models\ActivityLog::with('user')->latest()->paginate(20);
         return view('admin.activity-log', compact('logs'));
@@ -136,5 +136,6 @@ Route::middleware(['auth', 'role:accountant'])->prefix('accountant')->name('acco
     Route::post('/requisitions/{requisition}/status',  [AccountantController::class, 'updateStatus'])->name('requisitions.status');
     Route::get('/requisitions/{requisition}/payment',  [AccountantController::class, 'showPaymentForm'])->name('requisitions.payment');
     Route::post('/requisitions/{requisition}/payment', [AccountantController::class, 'uploadPayment'])->name('requisitions.payment.store');
-    Route::get('/stock-report', [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/stock-report',        [App\Http\Controllers\StockReportController::class, 'index'])->name('stock-report');
+    Route::get('/stock-report/export', [App\Http\Controllers\StockReportController::class, 'exportPdf'])->name('stock-report.export'); // ✅ ADDED
 });

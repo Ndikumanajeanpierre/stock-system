@@ -11,41 +11,42 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-   public function dashboard()
-{
-    $totalUsers            = User::count();
-    $totalRequisitions     = StockRequisition::count();
-    $pendingRequisitions   = StockRequisition::where('status', 'pending')->count();
-    $completedRequisitions = StockRequisition::where('status', 'completed')->count();
-    $totalPayments         = Payment::sum('amount');
-    $recentRequisitions    = StockRequisition::with(['user', 'department'])
-                                ->latest()->take(5)->get();
+    public function dashboard()
+    {
+        $totalUsers            = User::count();
+        $totalRequisitions     = StockRequisition::count();
+        $pendingRequisitions   = StockRequisition::where('status', 'pending')->count();
+        $completedRequisitions = StockRequisition::where('status', 'completed')->count();
+        $totalPayments         = Payment::sum('amount');
+        $recentRequisitions    = StockRequisition::with(['user', 'department'])
+                                    ->latest()->take(5)->get();
 
-    // Status counts for chart
-    $statusCounts = [];
-    foreach(['pending','approved','rejected','purchased','paid','completed'] as $status) {
-        $statusCounts[$status] = StockRequisition::where('status', $status)->count();
+        // Status counts for chart
+        $statusCounts = [];
+        foreach (['pending', 'approved', 'rejected', 'purchased', 'paid', 'completed'] as $status) {
+            $statusCounts[$status] = StockRequisition::where('status', $status)->count();
+        }
+
+        // Monthly data for chart (last 6 months)
+        $monthlyLabels = [];
+        $monthlyData   = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month           = now()->subMonths($i);
+            $monthlyLabels[] = $month->format('M Y');
+            $monthlyData[]   = StockRequisition::whereYear('created_at', $month->year)
+                                ->whereMonth('created_at', $month->month)
+                                ->count();
+        }
+
+        return view('admin.dashboard', compact(
+            'totalUsers', 'totalRequisitions', 'pendingRequisitions',
+            'completedRequisitions', 'totalPayments', 'recentRequisitions',
+            'statusCounts', 'monthlyLabels', 'monthlyData'
+        ));
     }
-
-    // Monthly data for chart (last 6 months)
-    $monthlyLabels = [];
-    $monthlyData   = [];
-    for ($i = 5; $i >= 0; $i--) {
-        $month = now()->subMonths($i);
-        $monthlyLabels[] = $month->format('M Y');
-        $monthlyData[]   = StockRequisition::whereYear('created_at', $month->year)
-                            ->whereMonth('created_at', $month->month)
-                            ->count();
-    }
-
-    return view('admin.dashboard', compact(
-        'totalUsers', 'totalRequisitions', 'pendingRequisitions',
-        'completedRequisitions', 'totalPayments', 'recentRequisitions',
-        'statusCounts', 'monthlyLabels', 'monthlyData'
-    ));
-}
 
     // ── Users ─────────────────────────────────────────────────────
+
     public function users()
     {
         $users = User::latest()->get();
@@ -61,11 +62,21 @@ class AdminController extends Controller
     {
         $request->validate([
             'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:users',
+            // regex enforces full TLD: .com .net .org (min 3 chars after dot)
+            // blocks: @gmail.co, @gmail.c, @gmai, @gmail. etc.
+            'email'      => [
+                'required',
+                'unique:users',
+                'regex:/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{3,}$/'
+            ],
             'password'   => 'required|min:6',
             'role'       => 'required|in:admin,employee,accountant',
             'department' => 'nullable|string',
             'phone'      => 'nullable|string',
+        ], [
+            // Custom error message shown to the user
+            'email.regex' => 'Please enter a valid email address with a full extension (e.g. name@example.com, .net, .org)',
+            'email.unique' => 'This email address is already registered.',
         ]);
 
         User::create([
@@ -91,10 +102,20 @@ class AdminController extends Controller
     {
         $request->validate([
             'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email,' . $user->id,
+            // ignore current user's own email on unique check
+            // same regex as storeUser — blocks short TLDs
+            'email'      => [
+                'required',
+                'unique:users,email,' . $user->id,
+                'regex:/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{3,}$/'
+            ],
             'role'       => 'required|in:admin,employee,accountant',
             'department' => 'nullable|string',
             'phone'      => 'nullable|string',
+        ], [
+            // Custom error messages for updateUser
+            'email.regex'  => 'Please enter a valid email address with a full extension (e.g. name@example.com, .net, .org)',
+            'email.unique' => 'This email address is already taken by another user.',
         ]);
 
         $data = [
@@ -124,6 +145,7 @@ class AdminController extends Controller
     }
 
     // ── Departments ───────────────────────────────────────────────
+
     public function departments()
     {
         $departments = Department::latest()->get();
@@ -143,28 +165,33 @@ class AdminController extends Controller
     }
 
     // ── All Requisitions ──────────────────────────────────────────
+
     public function requisitions(Request $request)
     {
         $query = StockRequisition::with(['user', 'department']);
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('item_name', 'like', '%'.$request->search.'%')
-                  ->orWhere('reference_number', 'like', '%'.$request->search.'%')
-                  ->orWhereHas('user', function($q) use ($request) {
-                      $q->where('name', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('item_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('reference_number', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('user', function ($q) use ($request) {
+                      $q->where('name', 'like', '%' . $request->search . '%');
                   });
             });
         }
+
         if ($request->status) {
             $query->where('status', $request->status);
         }
+
         if ($request->department_id) {
             $query->where('department_id', $request->department_id);
         }
+
         if ($request->date_from) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
+
         if ($request->date_to) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }

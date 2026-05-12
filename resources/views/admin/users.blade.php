@@ -95,7 +95,9 @@
                                         <h5 class="modal-title">Edit User - {{ $user->name }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <form method="POST" action="{{ route('admin.users.update', $user) }}">
+                                    <form method="POST"
+                                          action="{{ route('admin.users.update', $user) }}"
+                                          id="editForm{{ $user->id }}">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-body">
@@ -105,11 +107,27 @@
                                                     <input type="text" name="name" class="form-control"
                                                         value="{{ $user->name }}" required>
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Email</label>
-                                                    <input type="email" name="email" class="form-control"
-                                                        value="{{ $user->email }}" required>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        id="editEmail{{ $user->id }}"
+                                                        class="form-control"
+                                                        value="{{ $user->email }}"
+                                                        pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{3,}"
+                                                        placeholder="example@gmail.com"
+                                                        required
+                                                    >
+                                                    <!-- JS error message -->
+                                                    <div id="editEmailError{{ $user->id }}"
+                                                         class="invalid-feedback"
+                                                         style="display:none;">
+                                                        Please enter a valid email — must include full extension (.com, .net, .org)
+                                                    </div>
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Role</label>
                                                     <select name="role" class="form-select" required>
@@ -118,16 +136,19 @@
                                                         <option value="accountant" {{ $user->role == 'accountant' ? 'selected' : '' }}>Accountant</option>
                                                     </select>
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Department</label>
                                                     <input type="text" name="department" class="form-control"
                                                         value="{{ $user->department }}">
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">Phone</label>
                                                     <input type="text" name="phone" class="form-control"
                                                         value="{{ $user->phone }}">
                                                 </div>
+
                                                 <div class="col-md-6">
                                                     <label class="form-label">New Password (optional)</label>
                                                     <input type="password" name="password" class="form-control"
@@ -143,6 +164,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </td>
                 </tr>
                 @empty
@@ -152,4 +174,63 @@
         </table>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Requires min 3 chars after dot — blocks .co, .c, @gmai etc.
+    function isValidEmail(value) {
+        return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{3,}$/.test(value.trim());
+    }
+
+    // Attach validation to every edit modal form
+    @foreach($users as $user)
+    (function () {
+        const userId     = {{ $user->id }};
+        const emailInput = document.getElementById('editEmail'      + userId);
+        const emailError = document.getElementById('editEmailError' + userId);
+        const form       = document.getElementById('editForm'       + userId);
+
+        if (!emailInput || !form) return;
+
+        function showError() {
+            emailInput.classList.add('is-invalid');
+            emailError.style.display = 'block';
+        }
+
+        function clearError() {
+            emailInput.classList.remove('is-invalid');
+            emailError.style.display = 'none';
+        }
+
+        // Validate when user leaves the email field
+        emailInput.addEventListener('blur', function () {
+            if (this.value && !isValidEmail(this.value)) {
+                showError();
+            } else {
+                clearError();
+            }
+        });
+
+        // Clear error live as user types a valid email
+        emailInput.addEventListener('input', function () {
+            if (isValidEmail(this.value)) {
+                clearError();
+            }
+        });
+
+        // Block form submit if email is still invalid
+        form.addEventListener('submit', function (e) {
+            if (!isValidEmail(emailInput.value)) {
+                e.preventDefault();
+                showError();
+                emailInput.focus();
+            }
+        });
+    })();
+    @endforeach
+
+});
+</script>
+
 @endsection

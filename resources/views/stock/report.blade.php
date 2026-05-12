@@ -67,14 +67,12 @@
     opacity: 0.08;
     transform: translate(20px, 20px);
 }
-/* Icon colors */
 .icon-purple  { background: #6c63ff; }
 .icon-teal    { background: #00b894; }
 .icon-amber   { background: #f39c12; }
 .icon-blue    { background: #0984e3; }
 .icon-pink    { background: #e84393; }
 .icon-red     { background: #d63031; }
-/* Accent circles */
 .accent-purple { background: #6c63ff; }
 .accent-teal   { background: #00b894; }
 .accent-amber  { background: #f39c12; }
@@ -90,10 +88,17 @@
 }
 </style>
 
+{{-- ✅ FIXED: Export button uses correct route based on user role --}}
 <div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('admin.stock-report.export') }}" class="btn btn-danger">
-        <i class="fas fa-file-pdf me-2"></i> Export Stock PDF
-    </a>
+    @if(auth()->user()->role === 'accountant')
+        <a href="{{ route('accountant.stock-report.export') }}" class="btn btn-danger">
+            <i class="fas fa-file-pdf me-2"></i> Export Stock PDF
+        </a>
+    @else
+        <a href="{{ route('admin.stock-report.export') }}" class="btn btn-danger">
+            <i class="fas fa-file-pdf me-2"></i> Export Stock PDF
+        </a>
+    @endif
 </div>
 
 <!-- Summary Cards -->
@@ -156,6 +161,7 @@
 </div>
 
 <div class="row g-4">
+
     <!-- Low Stock Warning -->
     @if($lowStockItems->count() > 0)
     <div class="col-md-12">
@@ -218,7 +224,10 @@
                         @forelse($stockItems as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td><strong>{{ $item->name }}</strong><br><small class="text-muted">{{ $item->unit }}</small></td>
+                            <td>
+                                <strong>{{ $item->name }}</strong><br>
+                                <small class="text-muted">{{ $item->unit }}</small>
+                            </td>
                             <td>{{ $item->category ?? 'N/A' }}</td>
                             <td>RWF {{ number_format($item->unit_price, 2) }}</td>
                             <td><span class="badge bg-info">{{ $item->totalIn() }}</span></td>
@@ -228,7 +237,11 @@
                                     {{ $item->quantity_available }}
                                 </span>
                             </td>
-                            <td><strong class="text-success">RWF {{ number_format($item->quantity_available * $item->unit_price, 2) }}</strong></td>
+                            <td>
+                                <strong class="text-success">
+                                    RWF {{ number_format($item->quantity_available * $item->unit_price, 2) }}
+                                </strong>
+                            </td>
                             <td>
                                 @if($item->quantity_available == 0)
                                     <span class="badge bg-danger">Out of Stock</span>
@@ -299,5 +312,6 @@
             </div>
         </div>
     </div>
+
 </div>
 @endsection
